@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkSecurity", "NetworkSecurity\NetworkSecurity.vcproj", "{1BDD5BC1-FF23-41E2-B9D7-F13A1DFC7B3E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CertificateCheck", "CertificateCheck\CertificateCheck.vcproj", "{14E78B4E-481A-42E2-A6F9-D4D4DF78E8A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1BDD5BC1-FF23-41E2-B9D7-F13A1DFC7B3E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1BDD5BC1-FF23-41E2-B9D7-F13A1DFC7B3E}.Debug|Win32.Build.0 = Debug|Win32
+		{1BDD5BC1-FF23-41E2-B9D7-F13A1DFC7B3E}.Release|Win32.ActiveCfg = Release|Win32
+		{1BDD5BC1-FF23-41E2-B9D7-F13A1DFC7B3E}.Release|Win32.Build.0 = Release|Win32
+		{14E78B4E-481A-42E2-A6F9-D4D4DF78E8A2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{14E78B4E-481A-42E2-A6F9-D4D4DF78E8A2}.Debug|Win32.Build.0 = Debug|Win32
+		{14E78B4E-481A-42E2-A6F9-D4D4DF78E8A2}.Release|Win32.ActiveCfg = Release|Win32
+		{14E78B4E-481A-42E2-A6F9-D4D4DF78E8A2}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
