@@ -1,45 +1,41 @@
-// CertificateCheck.cpp : 定义控制台应用程序的入口点。
-// 参考：http://blog.csdn.net/yincheng01/article/details/6845801
-// 数字证书参考：
-// 了解数字证书 http://technet.microsoft.com/zh-cn/library/bb123848(v=exchg.65).aspx
-// 浅析数字证书 http://www.cnblogs.com/hyddd/archive/2009/01/07/1371292.html
-// 数字证书的应用 http://tech.ccidnet.com/art/782/20030222/620577_1.html
-// 查看本地证书 http://tech.ccidnet.com/art/782/20040809/620573_1.html
+// 参考资料：
+// ../doc/VC++网络安全编程范例（1）--数字证书有效期验证.mht
+// ../doc/数字证书
 
 /***************************************************************
 
  * 项  目：数字证书
- * 文  件：CertificateCheck.cpp
- * 功  能：数字证书有效期验证
+ * 功  能：验证数字证书有效期
  * 作  者：Master.R
  * 日  期：2013-03-24
  * 版  权：Copyright (c) 2012-2013 Dream Company
- * 版  本：1.0.0_130324
+ * 版  本：0.2.0_130324
 
 ***************************************************************/
 
-#ifndef _WIN32_WINNT		// 允许使用特定于 Windows XP 或更高版本的功能。
+#ifndef _WIN32_WINNT		// 允许使用特定于 Windows NT 4.0 或更高版本的功能。
 #define _WIN32_WINNT 0x0400	// 将此值更改为相应的值，以适用于 Windows 的其他版本。
-#endif		
+#endif
 
 #include <stdio.h>
 #include <Windows.h>
-#include <tchar.h>
 #include <WinCrypt.h>
 #pragma comment(lib, "Crypt32.lib")
 #define MY_ENCODING_TYPE  (PKCS_7_ASN_ENCODING | X509_ASN_ENCODING)
-void HandleError(TCHAR *pszErr)
-{
-	MessageBox(NULL, pszErr, L"数字证书验证错误", MB_OK);
-}
 
-int _tmain(int argc, _TCHAR* argv[])
+
+void HandleError(char *pszErr);	// 错误处理函数
+
+
+int main(int argc, char* argv[])
 {
 	/**变量声明与初始化**/
 	HCERTSTORE		hSystemStore = NULL;
 	PCCERT_CONTEXT	pTargetCert = NULL;
 	PCERT_INFO		pTargetCertInfo;
 	char			szSubjectName[] = "ABA.ECOM Root CA";	// 证书客体名称，应保证此证书在证书库中有效
+
+	CERT_INFO		targetCertInfo;
 
 	/**打开系统证书库**/
 	hSystemStore = CertOpenStore(
@@ -54,30 +50,29 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	else
 	{
-		DWORD dwErrorCode = GetLastError(); 
-		TCHAR pszError[512] = {0};
-		swprintf(pszError, sizeof(pszError), L"打开根证书库出错. Error code[%l]", dwErrorCode);
-		HandleError(pszError);
+		HandleError("打开根证书库出错.");
 	}
+
+	/**查找系统证书库中第一个证书**/
+	pTargetCert = CertEnumCertificatesInStore(hSystemStore, pTargetCert);
+	targetCertInfo.Issuer = pTargetCert->pCertInfo->Issuer;
+	targetCertInfo.SerialNumber = pTargetCert->pCertInfo->SerialNumber;
 
 	/**在系统证书库中查询证书**/
 	pTargetCert = CertFindCertificateInStore(
 			hSystemStore,					// 证书库句柄，系统证书库
 			MY_ENCODING_TYPE,				// 编码类型
 			0,								// 不需要设置标志位
-			CERT_FIND_SUBJECT_STR_A,		// 查找标准为：证书客体名称为szSubjectName
-			szSubjectName,					// 证书客体名称
-			pTargetCert);					// 上次查找到的证书， 第一次查找，从证书库开始位置查找
+			CERT_FIND_SUBJECT_CERT,			// 查找标准为：CERT_INFO's issuer and serial number 
+			&targetCertInfo,					// CERT_INFO
+			NULL);							// 上次查找到的证书， 第一次查找，从证书库开始位置查找
 	if (pTargetCert)
 	{
 		printf("找到了此证书. \n");
 	}
 	else
 	{
-		DWORD dwErrorCode = GetLastError(); 
-		TCHAR pszError[512] = {0};
-		swprintf(pszError, sizeof(pszError), L"未能找到所需的证书. Error code[%l]", dwErrorCode);
-		HandleError(pszError);
+		HandleError("未能找到所需的证书.");
 	}
 
 	/**证书有效期验证**/
@@ -109,10 +104,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	else
 	{
-		DWORD dwErrorCode = GetLastError(); 
-		TCHAR pszError[512] = {0};
-		swprintf(pszError, sizeof(pszError), L"关闭根证书库出错. Error code[%l]", dwErrorCode);
-		HandleError(pszError);
+		HandleError("关闭根证书库出错.");
 	}
 
 	getchar();
@@ -120,3 +112,20 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 }
 
+
+/**
+ * 函数功能：输出错误信息，并终止运行
+ * 参    数：错误信息
+ * 返 回 值：无
+ **/
+void HandleError(char *pszErr)
+{
+	printf("程序执行发生错误!\n");
+	if (pszErr)
+	{
+		printf("%s\n",pszErr);
+	}
+	printf("错误代码为: %x.\n",GetLastError());
+	printf("程序终止执行!\n");
+	exit(1);
+}
