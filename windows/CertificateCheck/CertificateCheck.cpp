@@ -1,11 +1,10 @@
 // CertificateCheck.cpp : 定义控制台应用程序的入口点。
 // 参考：http://blog.csdn.net/yincheng01/article/details/6845801
 // 数字证书参考：
-// http://technet.microsoft.com/zh-cn/library/bb123848(v=exchg.65).aspx
-// http://www.cnblogs.com/hyddd/archive/2009/01/07/1371292.html
-// http://blog.csdn.net/program_think/article/details/5300184
-// http://tech.ccidnet.com/art/782/20030222/620577_1.html
-// http://tech.ccidnet.com/art/782/20040809/620573_1.html
+// 了解数字证书 http://technet.microsoft.com/zh-cn/library/bb123848(v=exchg.65).aspx
+// 浅析数字证书 http://www.cnblogs.com/hyddd/archive/2009/01/07/1371292.html
+// 数字证书的应用 http://tech.ccidnet.com/art/782/20030222/620577_1.html
+// 查看本地证书 http://tech.ccidnet.com/art/782/20040809/620573_1.html
 
 /***************************************************************
 
@@ -19,9 +18,15 @@
 
 ***************************************************************/
 
-#include "stdafx.h"
+#ifndef _WIN32_WINNT		// 允许使用特定于 Windows XP 或更高版本的功能。
+#define _WIN32_WINNT 0x0400	// 将此值更改为相应的值，以适用于 Windows 的其他版本。
+#endif		
+
+#include <stdio.h>
 #include <Windows.h>
+#include <tchar.h>
 #include <WinCrypt.h>
+#pragma comment(lib, "Crypt32.lib")
 #define MY_ENCODING_TYPE  (PKCS_7_ASN_ENCODING | X509_ASN_ENCODING)
 void HandleError(TCHAR *pszErr)
 {
@@ -109,6 +114,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		swprintf(pszError, sizeof(pszError), L"关闭根证书库出错. Error code[%l]", dwErrorCode);
 		HandleError(pszError);
 	}
+
+	getchar();
 
 	return 0;
 }
